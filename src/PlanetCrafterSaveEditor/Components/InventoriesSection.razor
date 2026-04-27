@@ -1,0 +1,77 @@
+@inject SaveSession Session
+@inject GIdNamer Namer
+
+@if (Session.Save is { } save)
+{
+    var inventories = save.Inventories().ToList();
+    var labels = BuildLabels(save, inventories);
+    var selected = _selectedId is { } id ? inventories.FirstOrDefault(i => i.Id == id) : null;
+
+    <section class="section">
+        <h2>Inventories</h2>
+        <div class="inv-layout">
+            <ul class="inv-list">
+                @foreach (var inv in inventories)
+                {
+                    var isSel = selected?.Id == inv.Id;
+                    <li class="@(isSel ? "selected" : "")" @onclick="() => Select(inv.Id)">
+                        <span class="inv-label">@labels[inv.Id]</span>
+                        <span class="inv-fill">@inv.WoIds.Count / @inv.Size</span>
+                    </li>
+                }
+            </ul>
+            <div class="inv-detail">
+                @if (selected is null)
+                {
+                    <p class="hint">Select an inventory.</p>
+                }
+                else
+                {
+                    <InventoryEditor Inventory="selected" AllInventories="inventories" Labels="labels" />
+                }
+            </div>
+        </div>
+    </section>
+}
+
+@code {
+    private long? _selectedId;
+
+    protected override void OnInitialized() => Session.OnChanged += () => InvokeAsync(StateHasChanged);
+
+    private void Select(long id) => _selectedId = id;
+
+    private Dictionary<long, string> BuildLabels(SaveFile save, List<InventoryView> invs)
+    {
+        var result = new Dictionary<long, string>();
+        var players = save.Players().ToList();
+        var wos = save.WorldObjects().ToList();
+
+        foreach (var inv in invs)
+        {
+            var asPlayerInv = players.FirstOrDefault(p => p.InventoryId == inv.Id);
+            if (asPlayerInv is not null)
+            {
+                result[inv.Id] = $"{asPlayerInv.Name}'s inventory";
+                continue;
+            }
+            var asPlayerEquip = players.FirstOrDefault(p => p.EquipmentId == inv.Id);
+            if (asPlayerEquip is not null)
+            {
+                result[inv.Id] = $"{asPlayerEquip.Name}'s equipment";
+                continue;
+            }
+            var asWo = wos.FirstOrDefault(w => w.Id == inv.Id);
+            if (asWo is not null)
+            {
+                var name = Namer.Display(asWo.GId);
+                result[inv.Id] = asWo.HasPosition
+                    ? $"{name} at {asWo.PositionString}"
+                    : name;
+                continue;
+            }
+            result[inv.Id] = $"Inventory #{inv.Id}";
+        }
+        return result;
+    }
+}

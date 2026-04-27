@@ -1,0 +1,54 @@
+.inv-editor { display: flex; flex-direction: column; gap: 0.5rem; max-height: 480px; overflow-y: auto; }
+
+.inv-editor header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+}
+
+.inv-title { font-weight: 600; }
+.fill { color: #666; font-variant-numeric: tabular-nums; }
+
+.slots { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.4rem; }
+
+.slot {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.6rem;
+    padding: 0.5rem;
+    background: #f7f8fa;
+    border: 1px solid #eaecef;
+    border-radius: 6px;
+    flex-wrap: wrap;
+}
+
+.slot-info { display: flex; flex-direction: column; gap: 0.2rem; min-width: 180px; flex: 1; }
+.slot-name { font-weight: 600; }
+.slot-meta { font-size: 0.8rem; color: #666; }
+.slot-meta code { background: #ececec; padding: 0 0.2rem; border-radius: 3px; }
+
+.field { display: inline-flex; gap: 0.3rem; align-items: center; font-size: 0.85rem; }
+.field input { width: 6rem; padding: 0.15rem 0.3rem; border: 1px solid #c5cad0; border-radius: 4px; }
+
+.slot-actions { display: flex; gap: 0.3rem; align-items: center; }
+
+.move-target { padding: 0.2rem 0.4rem; border: 1px solid #c5cad0; border-radius: 4px; background: #fff; }
+
+.btn.danger { background: #c0392b; color: #fff; border: 1px solid #962d22; }
+.btn.danger:hover { background: #962d22; }
+
+.add-row { display: flex; gap: 0.4rem; padding-top: 0.4rem; border-top: 1px dashed #dcdfe3; }
+.add-input { flex: 1; padding: 0.3rem 0.5rem; border: 1px solid #c5cad0; border-radius: 6px; }
+
+.error { color: #b00020; font-size: 0.85rem; align-self: center; }
+
+.orphan { color: #b48700; font-style: italic; }
+
+@media (prefers-color-scheme: dark) {
+    .slot { background: #25282d; border-color: #3a3f47; }
+    .slot-meta { color: #a3a3a3; }
+    .slot-meta code { background: #2c313a; }
+    .field input, .move-target, .add-input { background: #1f2226; color: #e6e6e6; border-color: #4a4f57; }
+    .add-row { border-top-color: #3a3f47; }
+    .fill { color: #a3a3a3; }
+}

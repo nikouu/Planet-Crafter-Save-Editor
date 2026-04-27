@@ -1,0 +1,22 @@
+@inject SaveSession Session
+
+<div class="wo-row">
+    <div class="wo-info">
+        <span class="wo-name">@Row.DisplayName</span>
+        <span class="wo-meta">
+            <code>@Row.Wo.GId</code>
+            <span class="dot">·</span>
+            <code class="pos">@Row.Wo.PositionString</code>
+            <span class="dot">·</span>
+            <span class="cat">@Row.Category</span>
+        </span>
+    </div>
+    <TeleportPicker PlanetId="@PlanetId" OnApply="ApplyTeleport" />
+</div>
+
+@code {
+    [Parameter, EditorRequired] public WorldObjectsSection.Row Row { get; set; } = default!;
+    [Parameter, EditorRequired] public string PlanetId { get; set; } = "";
+
+    private void ApplyTeleport(Vec3 dest) => Session.TeleportWorldObject(Row.Wo.Id, dest);
+}

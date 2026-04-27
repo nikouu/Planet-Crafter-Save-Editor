@@ -1,0 +1,96 @@
+@inject SaveSession Session
+@inject SpawnResolver Spawn
+
+<div class="teleport-picker">
+    <select @bind="_mode" class="mode-select">
+        <option value="custom">Custom coords</option>
+        <option value="spawn">Escape pod</option>
+        <option value="player">Another player</option>
+    </select>
+
+    @if (_mode == "spawn")
+    {
+        var pod = Spawn.ResolveSpawn(Session.Save!, PlanetId);
+        @if (pod is null)
+        {
+            <span class="hint">No escape pod found for @PlanetId.</span>
+        }
+        else
+        {
+            <button class="btn primary" @onclick="() => Apply(pod.PositionString!)">Teleport to @PlanetId pod</button>
+        }
+    }
+    else if (_mode == "player")
+    {
+        var others = Session.Save!.Players()
+            .Where(p => p.PlanetId == PlanetId && p.Id != ExcludePlayerId)
+            .ToList();
+        @if (others.Count == 0)
+        {
+            <span class="hint">No other players on @PlanetId.</span>
+        }
+        else
+        {
+            <select @bind="_targetPlayer" class="target-select">
+                <option value="">Pick a player…</option>
+                @foreach (var p in others)
+                {
+                    <option value="@p.Id">@p.Name</option>
+                }
+            </select>
+            <button class="btn primary" disabled="@(string.IsNullOrEmpty(_targetPlayer))" @onclick="ApplyPlayer">Teleport to player</button>
+        }
+    }
+    else
+    {
+        <input type="number" step="0.01" placeholder="X" @bind="_x" class="coord" />
+        <input type="number" step="0.01" placeholder="Y" @bind="_y" class="coord" />
+        <input type="number" step="0.01" placeholder="Z" @bind="_z" class="coord" />
+        <label class="snap"><input type="checkbox" @bind="_snapAbove" /> +2 above</label>
+        <button class="btn primary" @onclick="ApplyCustom">Teleport</button>
+    }
+    @if (_warning is not null)
+    {
+        <p class="warn">@_warning</p>
+    }
+</div>
+
+@code {
+    [Parameter, EditorRequired] public string PlanetId { get; set; } = "";
+    [Parameter] public long? ExcludePlayerId { get; set; }
+    [Parameter, EditorRequired] public EventCallback<Vec3> OnApply { get; set; }
+
+    private string _mode = "custom";
+    private string _targetPlayer = "";
+    private float _x;
+    private float _y;
+    private float _z;
+    private bool _snapAbove;
+    private string? _warning;
+
+    private async Task Apply(string positionString)
+    {
+        var v = Vec3.Parse(positionString);
+        _warning = null;
+        await OnApply.InvokeAsync(v);
+    }
+
+    private async Task ApplyPlayer()
+    {
+        if (!long.TryParse(_targetPlayer, out var id)) return;
+        var target = Session.Save!.Players().FirstOrDefault(p => p.Id == id);
+        if (target is null) return;
+        await Apply(target.PositionString);
+    }
+
+    private async Task ApplyCustom()
+    {
+        _warning = null;
+        var y = _snapAbove ? _y + 2.0f : _y;
+        if (y < 0 || Math.Abs(_x) > 5000 || Math.Abs(_z) > 5000)
+        {
+            _warning = "Coordinates look unusual — double-check before saving.";
+        }
+        await OnApply.InvokeAsync(new Vec3(_x, y, _z));
+    }
+}

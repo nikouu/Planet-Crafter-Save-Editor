@@ -1,0 +1,35 @@
+@page "/"
+@inject SaveSession Session
+
+<PageTitle>Planet Crafter Save Editor</PageTitle>
+
+<div class="home">
+    <section class="section landing">
+        <h1>Planet Crafter Save Editor</h1>
+        <p class="tagline">
+            Unstuck players, items and chests in your Planet Crafter save. Drop in your save file,
+            point and click to teleport, edit inventories and download the result. Everything runs
+            in your browser — your save never leaves your machine.
+        </p>
+    </section>
+
+    <section class="section">
+        <h2>1. Load a save</h2>
+        <DropZone />
+        <HelpPanel />
+    </section>
+
+    @if (Session.Save is not null)
+    {
+        <SaveInfoStrip />
+        <PlayersSection />
+        <WorldObjectsSection />
+        <InventoriesSection />
+    }
+</div>
+
+<DownloadBar />
+
+@code {
+    protected override void OnInitialized() => Session.OnChanged += () => InvokeAsync(StateHasChanged);
+}

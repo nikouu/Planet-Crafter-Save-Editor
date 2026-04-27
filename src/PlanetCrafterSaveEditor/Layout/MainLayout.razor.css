@@ -1,0 +1,63 @@
+.app-shell {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: #fafafa;
+    color: #1c1c1c;
+}
+
+.app-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.25rem;
+    background: linear-gradient(135deg, #1f3b4d, #0f2230);
+    color: #fff;
+}
+
+.app-header h1 {
+    font-size: 1.4rem;
+    margin: 0;
+}
+
+.tagline {
+    margin: 0.1rem 0 0;
+    color: #b9d7e6;
+    font-size: 0.9rem;
+}
+
+.repo-link {
+    color: #b9d7e6;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.repo-link:hover { color: #fff; text-decoration: underline; }
+
+.banner {
+    background: #fff8d6;
+    color: #5a4500;
+    padding: 0.5rem 1.25rem;
+    font-size: 0.9rem;
+    border-bottom: 1px solid #f1de9a;
+}
+
+.banner code {
+    background: #fff1b3;
+    padding: 0.05rem 0.3rem;
+    border-radius: 3px;
+}
+
+.app-main {
+    flex: 1;
+    max-width: 1100px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 1.25rem 1.25rem 5rem;
+}
+
+@media (prefers-color-scheme: dark) {
+    .app-shell { background: #1a1d20; color: #e6e6e6; }
+    .banner { background: #3a2f00; color: #f6e08c; border-bottom-color: #5a4500; }
+    .banner code { background: #5a4500; }
+}

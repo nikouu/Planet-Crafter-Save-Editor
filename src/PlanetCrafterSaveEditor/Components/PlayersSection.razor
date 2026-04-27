@@ -1,0 +1,18 @@
+@inject SaveSession Session
+
+@if (Session.Save is { } save)
+{
+    <section class="section">
+        <h2>Players</h2>
+        <div class="player-grid">
+            @foreach (var player in save.Players())
+            {
+                <PlayerCard Player="player" />
+            }
+        </div>
+    </section>
+}
+
+@code {
+    protected override void OnInitialized() => Session.OnChanged += () => InvokeAsync(StateHasChanged);
+}

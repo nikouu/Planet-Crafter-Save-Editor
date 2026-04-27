@@ -1,0 +1,45 @@
+@inject SaveSession Session
+
+@if (Session.Save is { } save)
+{
+    var meta = save.SaveMeta();
+    var players = save.Players().ToList();
+    <div class="save-info">
+        <div class="save-info-cell">
+            <span class="label">File</span>
+            <span class="value">@(Session.FileName ?? "(unnamed)")</span>
+        </div>
+        @if (meta is not null)
+        {
+            <div class="save-info-cell">
+                <span class="label">Save name</span>
+                <span class="value">@meta.SaveDisplayName</span>
+            </div>
+            <div class="save-info-cell">
+                <span class="label">Planet</span>
+                <span class="value">@meta.PlanetId</span>
+            </div>
+            <div class="save-info-cell">
+                <span class="label">Version</span>
+                <span class="value">@meta.Version</span>
+            </div>
+            <div class="save-info-cell">
+                <span class="label">Mode</span>
+                <span class="value">@meta.Mode</span>
+            </div>
+        }
+        <div class="save-info-cell">
+            <span class="label">Players</span>
+            <span class="value">
+                @foreach (var p in players)
+                {
+                    <span class="player-badge @(p.IsHost ? "host" : "")">@p.Name</span>
+                }
+            </span>
+        </div>
+    </div>
+}
+
+@code {
+    protected override void OnInitialized() => Session.OnChanged += () => InvokeAsync(StateHasChanged);
+}

@@ -1,0 +1,58 @@
+@inject SaveSession Session
+
+<div class="dropzone @(_dragOver ? "dropzone-over" : "")"
+     @ondragenter="OnDragEnter" @ondragenter:preventDefault @ondragenter:stopPropagation
+     @ondragleave="OnDragLeave" @ondragleave:preventDefault @ondragleave:stopPropagation
+     @ondragover:preventDefault @ondragover:stopPropagation>
+    <InputFile OnChange="OnInputFile" accept=".json" class="dropzone-input" id="dropzone-input" />
+    <label for="dropzone-input" class="dropzone-label">
+        <strong>Drop a save file here</strong>
+        <span>or click to choose</span>
+        <span class="dropzone-hint">.json files (typical save name)</span>
+    </label>
+    @if (!string.IsNullOrEmpty(_error))
+    {
+        <p class="dropzone-error">@_error</p>
+    }
+</div>
+
+@code {
+    private bool _dragOver;
+    private string? _error;
+
+    private const long MaxBytes = 10 * 1024 * 1024;
+
+    private void OnDragEnter() => _dragOver = true;
+    private void OnDragLeave() => _dragOver = false;
+
+    private async Task OnInputFile(InputFileChangeEventArgs e)
+    {
+        _dragOver = false;
+        _error = null;
+
+        var file = e.File;
+        if (file is null) return;
+
+        if (file.Size > MaxBytes)
+        {
+            _error = $"File is too large ({file.Size:N0} bytes). Max {MaxBytes:N0}.";
+            return;
+        }
+
+        try
+        {
+            using var ms = new MemoryStream();
+            await file.OpenReadStream(MaxBytes).CopyToAsync(ms);
+            var bytes = ms.ToArray();
+            Session.Load(bytes, file.Name);
+        }
+        catch (FormatException ex)
+        {
+            _error = $"This doesn't look like a Planet Crafter save: {ex.Message}";
+        }
+        catch (Exception ex)
+        {
+            _error = $"Failed to load: {ex.Message}";
+        }
+    }
+}

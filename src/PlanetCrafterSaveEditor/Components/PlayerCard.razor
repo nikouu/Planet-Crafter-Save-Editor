@@ -1,0 +1,22 @@
+@inject SaveSession Session
+
+<article class="player-card">
+    <header>
+        <span class="name">@Player.Name</span>
+        @if (Player.IsHost) { <span class="host-badge">host</span> }
+        <span class="planet">on @Player.PlanetId</span>
+    </header>
+    <div class="position-row">
+        <span class="label">Position</span>
+        <code>@Player.PositionString</code>
+    </div>
+    <TeleportPicker PlanetId="@Player.PlanetId"
+                    ExcludePlayerId="@Player.Id"
+                    OnApply="ApplyTeleport" />
+</article>
+
+@code {
+    [Parameter, EditorRequired] public PlayerView Player { get; set; } = default!;
+
+    private void ApplyTeleport(Vec3 dest) => Session.TeleportPlayer(Player.Id, dest);
+}

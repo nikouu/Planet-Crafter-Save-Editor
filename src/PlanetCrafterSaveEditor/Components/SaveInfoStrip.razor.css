@@ -1,0 +1,46 @@
+.save-info {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    background: #fff;
+    border: 1px solid #dcdfe3;
+    border-radius: 8px;
+    padding: 0.7rem 1rem;
+    margin: 1rem 0;
+}
+
+.save-info-cell {
+    display: flex;
+    flex-direction: column;
+}
+
+.label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    color: #666;
+    letter-spacing: 0.05em;
+}
+
+.value { font-weight: 600; }
+
+.player-badge {
+    display: inline-block;
+    padding: 0.1rem 0.45rem;
+    border-radius: 4px;
+    background: #e0e7ee;
+    color: #1f3b4d;
+    font-size: 0.85rem;
+    margin-right: 0.25rem;
+}
+
+.player-badge.host {
+    background: #1f3b4d;
+    color: #fff;
+}
+
+@media (prefers-color-scheme: dark) {
+    .save-info { background: #20242a; border-color: #3a3f47; }
+    .label { color: #a3a3a3; }
+    .player-badge { background: #2c313a; color: #d6e4ee; }
+    .player-badge.host { background: #4ea1ff; color: #0e1419; }
+}

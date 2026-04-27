@@ -1,0 +1,122 @@
+@inject SaveSession Session
+@inject GIdNamer Namer
+
+<div class="inv-editor">
+    <header>
+        <span class="inv-title">@Labels[Inventory.Id]</span>
+        <span class="fill">@Inventory.WoIds.Count / @Inventory.Size</span>
+    </header>
+
+    @{
+        var save = Session.Save!;
+        var allWos = save.WorldObjects().ToDictionary(w => w.Id);
+    }
+
+    <ul class="slots">
+        @foreach (var woId in Inventory.WoIds)
+        {
+            <li class="slot">
+                @if (allWos.TryGetValue(woId, out var wo))
+                {
+                    <div class="slot-info">
+                        <span class="slot-name">@Namer.Display(wo.GId)</span>
+                        <span class="slot-meta"><code>@wo.GId</code> · #@woId</span>
+                        @if (wo.HasCount)
+                        {
+                            <label class="field">count
+                                <input type="text" value="@wo.Count" @onchange="@(e => UpdateCount(wo.Id, e))" />
+                            </label>
+                        }
+                        @if (wo.HasGrowth)
+                        {
+                            <label class="field">grwth
+                                <input type="number" value="@wo.Growth" @onchange="@(e => UpdateGrowth(wo.Id, e))" />
+                            </label>
+                        }
+                    </div>
+                    <div class="slot-actions">
+                        <select class="move-target" @onchange="(e) => Move(wo.Id, e.Value?.ToString())">
+                            <option value="">Move to…</option>
+                            @foreach (var inv in AllInventories.Where(i => i.Id != Inventory.Id))
+                            {
+                                <option value="@inv.Id">@Labels[inv.Id]</option>
+                            }
+                        </select>
+                        <button class="btn danger" @onclick="() => Remove(woId)">Remove</button>
+                    </div>
+                }
+                else
+                {
+                    <span class="orphan">orphaned id #@woId (no matching world object)</span>
+                }
+            </li>
+        }
+    </ul>
+
+    <div class="add-row">
+        <input list="gid-suggestions" placeholder="gId (e.g. TrashMetalsScraps1)" @bind="_addGId" class="add-input" />
+        <datalist id="gid-suggestions">
+            @foreach (var g in Namer.KnownGIds.OrderBy(s => s))
+            {
+                <option value="@g">@Namer.Display(g)</option>
+            }
+        </datalist>
+        <button class="btn primary" disabled="@(string.IsNullOrWhiteSpace(_addGId) || Inventory.WoIds.Count >= Inventory.Size)" @onclick="Add">Add</button>
+        @if (_error is not null)
+        {
+            <span class="error">@_error</span>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter, EditorRequired] public InventoryView Inventory { get; set; } = default!;
+    [Parameter, EditorRequired] public List<InventoryView> AllInventories { get; set; } = new();
+    [Parameter, EditorRequired] public Dictionary<long, string> Labels { get; set; } = new();
+
+    private string _addGId = "";
+    private string? _error;
+
+    private void Remove(long woId)
+    {
+        _error = null;
+        try { Session.RemoveFromInventory(Inventory.Id, woId); }
+        catch (Exception ex) { _error = ex.Message; }
+    }
+
+    private void Move(long woId, string? targetIdRaw)
+    {
+        _error = null;
+        if (!long.TryParse(targetIdRaw, out var targetId)) return;
+        try { Session.MoveBetweenInventories(Inventory.Id, targetId, woId); }
+        catch (Exception ex) { _error = ex.Message; }
+    }
+
+    private void Add()
+    {
+        _error = null;
+        try
+        {
+            Session.AddToInventory(Inventory.Id, _addGId.Trim());
+            _addGId = "";
+        }
+        catch (Exception ex) { _error = ex.Message; }
+    }
+
+    private void UpdateCount(long woId, ChangeEventArgs e)
+    {
+        _error = null;
+        var value = e.Value?.ToString() ?? "";
+        try { Session.SetCount(woId, value); }
+        catch (Exception ex) { _error = ex.Message; }
+    }
+
+    private void UpdateGrowth(long woId, ChangeEventArgs e)
+    {
+        _error = null;
+        var value = e.Value?.ToString() ?? "";
+        if (!int.TryParse(value, out var n)) return;
+        try { Session.SetGrowth(woId, n); }
+        catch (Exception ex) { _error = ex.Message; }
+    }
+}

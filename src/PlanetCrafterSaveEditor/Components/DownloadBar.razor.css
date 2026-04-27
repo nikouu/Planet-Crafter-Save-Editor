@@ -1,0 +1,41 @@
+.download-bar {
+    position: sticky;
+    bottom: 0;
+    display: flex;
+    gap: 0.8rem;
+    align-items: center;
+    padding: 0.6rem 1rem;
+    background: #fff;
+    border-top: 1px solid #dcdfe3;
+    box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.04);
+    z-index: 5;
+}
+
+.download-status { flex: 1; font-size: 0.9rem; }
+.download-status .pending { color: #b48700; font-weight: 600; }
+.download-status .clean { color: #666; }
+
+.download-btn {
+    padding: 0.5rem 1rem;
+    font-weight: 600;
+    background: #1f7fdc;
+    color: #fff;
+    border: 1px solid #1865ad;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.download-btn:disabled {
+    background: #c5cad0;
+    border-color: #c5cad0;
+    cursor: not-allowed;
+}
+
+.download-btn:not(:disabled):hover { background: #1865ad; }
+
+.error { color: #b00020; font-size: 0.85rem; }
+
+@media (prefers-color-scheme: dark) {
+    .download-bar { background: #20242a; border-top-color: #3a3f47; box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.3); }
+    .download-status .clean { color: #a3a3a3; }
+}

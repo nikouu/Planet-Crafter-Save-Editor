@@ -1,0 +1,65 @@
+@inject SaveSession Session
+@inject IJSRuntime JS
+
+@if (Session.Save is not null)
+{
+    <div class="download-bar">
+        <div class="download-status">
+            @if (Session.IsDirty)
+            {
+                <span class="pending">@DirtyCount edit@(DirtyCount == 1 ? "" : "s") pending</span>
+            }
+            else
+            {
+                <span class="clean">No edits yet</span>
+            }
+        </div>
+        <button class="btn primary download-btn"
+                disabled="@(!Session.IsDirty)"
+                @onclick="Download">
+            Download edited save
+        </button>
+        @if (_error is not null)
+        {
+            <span class="error">@_error</span>
+        }
+    </div>
+}
+
+@code {
+    private string? _error;
+
+    protected override void OnInitialized() => Session.OnChanged += () => InvokeAsync(StateHasChanged);
+
+    private int DirtyCount => Session.Save?.Records.Count(r => r.IsDirty) ?? 0;
+
+    private async Task Download()
+    {
+        _error = null;
+        try
+        {
+            var bytes = Session.Write();
+            var fileName = SuffixFileName(Session.FileName ?? "save.json");
+            var base64 = Convert.ToBase64String(bytes);
+            await JS.InvokeVoidAsync("pcseInterop.downloadBytes", fileName, base64);
+        }
+        catch (Exception ex)
+        {
+            _error = ex.Message;
+        }
+    }
+
+    internal static string SuffixFileName(string original)
+    {
+        var dir = Path.GetDirectoryName(original) ?? "";
+        var stem = Path.GetFileNameWithoutExtension(original);
+        var ext = Path.GetExtension(original);
+        if (string.IsNullOrEmpty(ext)) ext = ".json";
+        if (!stem.EndsWith("-edited", StringComparison.Ordinal))
+        {
+            stem += "-edited";
+        }
+        var name = stem + ext;
+        return string.IsNullOrEmpty(dir) ? name : Path.Combine(dir, name);
+    }
+}

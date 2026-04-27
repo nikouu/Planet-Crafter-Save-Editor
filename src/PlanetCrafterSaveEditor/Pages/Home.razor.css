@@ -1,0 +1,29 @@
+.home {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.section {
+    background: #fff;
+    border: 1px solid #dcdfe3;
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+.section h1 { margin: 0 0 0.5rem 0; font-size: 1.6rem; }
+.section h2 { margin: 0 0 0.5rem 0; font-size: 1.15rem; }
+
+.landing .tagline { color: #555; margin: 0; line-height: 1.45; }
+
+::deep .section { background: #fff; border: 1px solid #dcdfe3; border-radius: 8px; padding: 1rem; }
+::deep .section h2 { margin: 0 0 0.5rem 0; font-size: 1.15rem; }
+
+@media (prefers-color-scheme: dark) {
+    .section { background: #20242a; border-color: #3a3f47; }
+    .landing .tagline { color: #c4c8cf; }
+    ::deep .section { background: #20242a; border-color: #3a3f47; }
+}

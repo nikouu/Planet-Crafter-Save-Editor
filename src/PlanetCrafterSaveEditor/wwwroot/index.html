@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Planet Crafter Save Editor — unstuck players, items, and chests</title>
+    <meta name="description" content="A free, in-browser save editor for The Planet Crafter. Teleport stuck players, containers, vehicles, and dropped items. Edit inventories. No install, no upload — runs entirely in your browser." />
+    <meta property="og:title" content="Planet Crafter Save Editor" />
+    <meta property="og:description" content="Unstuck players, items, and chests in your Planet Crafter save — entirely in your browser." />
+    <meta property="og:type" content="website" />
+    <base href="/" />
+    <link rel="preload" id="webassembly" />
+    <link rel="stylesheet" href="css/app.css" />
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <link href="PlanetCrafterSaveEditor.styles.css" rel="stylesheet" />
+    <script src="js/interop.js"></script>
+    <script type="importmap"></script>
+</head>
+
+<body>
+    <div id="app">
+        <svg class="loading-progress">
+            <circle r="40%" cx="50%" cy="50%" />
+            <circle r="40%" cx="50%" cy="50%" />
+        </svg>
+        <div class="loading-progress-text"></div>
+    </div>
+
+    <div id="blazor-error-ui">
+        An unhandled error has occurred.
+        <a href="." class="reload">Reload</a>
+        <span class="dismiss">🗙</span>
+    </div>
+    <script src="_framework/blazor.webassembly#[.{fingerprint}].js"></script>
+</body>
+
+</html>

@@ -1,0 +1,47 @@
+.teleport-picker {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    align-items: center;
+}
+
+.mode-select, .target-select {
+    padding: 0.25rem 0.4rem;
+    border: 1px solid #c5cad0;
+    border-radius: 6px;
+    background: #fff;
+}
+
+.coord {
+    width: 5.5rem;
+    padding: 0.25rem 0.4rem;
+    border: 1px solid #c5cad0;
+    border-radius: 6px;
+}
+
+.snap {
+    font-size: 0.85rem;
+    user-select: none;
+}
+
+.btn {
+    padding: 0.3rem 0.7rem;
+    border-radius: 6px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.btn.primary { background: #1f7fdc; color: white; border-color: #1864ad; }
+.btn.primary:hover:not(:disabled) { background: #1864ad; }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.hint { color: #666; font-size: 0.85rem; }
+.warn { width: 100%; color: #b48700; margin: 0.3rem 0 0; font-size: 0.85rem; }
+
+@media (prefers-color-scheme: dark) {
+    .mode-select, .target-select, .coord {
+        background: #1f2226; color: #e6e6e6; border-color: #4a4f57;
+    }
+    .hint { color: #a3a3a3; }
+}

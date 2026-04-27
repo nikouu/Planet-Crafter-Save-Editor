@@ -1,0 +1,51 @@
+.section { margin: 1.5rem 0; }
+.section h2 { font-size: 1.15rem; margin: 0 0 0.6rem; }
+
+.filters {
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-bottom: 0.7rem;
+}
+
+.chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.2rem 0.55rem;
+    border: 1px solid #c5cad0;
+    border-radius: 999px;
+    background: #f3f5f7;
+    font-size: 0.85rem;
+    user-select: none;
+    cursor: pointer;
+}
+
+.chip.on { background: #1f7fdc; color: #fff; border-color: #1864ad; }
+.chip input { margin: 0; }
+
+.search {
+    padding: 0.3rem 0.5rem;
+    border: 1px solid #c5cad0;
+    border-radius: 6px;
+    flex: 1;
+    min-width: 180px;
+    background: #fff;
+}
+
+.count { color: #666; font-size: 0.85rem; }
+
+.wo-list {
+    height: 480px;
+    overflow-y: auto;
+    border: 1px solid #dcdfe3;
+    border-radius: 8px;
+    background: #fff;
+}
+
+@media (prefers-color-scheme: dark) {
+    .chip { background: #20242a; border-color: #3a3f47; color: #d6e4ee; }
+    .search, .wo-list { background: #20242a; color: #e6e6e6; border-color: #3a3f47; }
+    .count { color: #a3a3a3; }
+}

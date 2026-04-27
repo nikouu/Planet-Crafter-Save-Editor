@@ -1,0 +1,5 @@
+{
+  "Container": ["Chest", "Locker", "Container", "StorageBox"],
+  "Vehicle": ["Rover", "Vehicle", "Drone"],
+  "DeathChest": ["DeathChest"]
+}

@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/PlanetCrafterSaveEditor/PlanetCrafterSaveEditor.csproj" />
+  </Folder>
+  <Folder Name="/test/">
+    <Project Path="test/PlanetCrafterSaveEditor.Tests/PlanetCrafterSaveEditor.Tests.csproj" />
+  </Folder>
+</Solution>

@@ -1,0 +1,65 @@
+@inject SaveSession Session
+@inject WorldObjectCategorizer Categorizer
+@inject GIdNamer Namer
+
+@if (Session.Save is { } save)
+{
+    var meta = save.SaveMeta();
+    var planetId = meta?.PlanetId ?? "";
+    var rows = save.WorldObjects()
+        .Where(w => w.HasPosition)
+        .Select(w => new Row(w, Categorizer.Categorize(w), Namer.Display(w.GId)))
+        .Where(MatchesFilter)
+        .ToList();
+
+    <section class="section">
+        <h2>Containers, items &amp; vehicles</h2>
+        <div class="filters">
+            @foreach (var cat in Enum.GetValues<WorldObjectCategory>())
+            {
+                <label class="chip @(IsEnabled(cat) ? "on" : "off")">
+                    <input type="checkbox" checked="@IsEnabled(cat)" @onchange="(e) => Toggle(cat, (bool)e.Value!)" />
+                    @cat
+                </label>
+            }
+            <input type="search" placeholder="Search name or gId" @bind="_query" @bind:event="oninput" class="search" />
+            <span class="count">@rows.Count shown</span>
+        </div>
+
+        <div class="wo-list">
+            <Virtualize Items="rows" Context="row" ItemSize="68">
+                <WorldObjectRow Row="row" PlanetId="@planetId" />
+            </Virtualize>
+        </div>
+    </section>
+}
+
+@code {
+    public record Row(WorldObjectView Wo, WorldObjectCategory Category, string DisplayName);
+
+    private string _query = "";
+    private readonly HashSet<WorldObjectCategory> _enabled = new()
+    {
+        WorldObjectCategory.Container,
+        WorldObjectCategory.Vehicle,
+        WorldObjectCategory.DeathChest,
+        WorldObjectCategory.Drop,
+    };
+
+    protected override void OnInitialized() => Session.OnChanged += () => InvokeAsync(StateHasChanged);
+
+    private bool IsEnabled(WorldObjectCategory cat) => _enabled.Contains(cat);
+
+    private void Toggle(WorldObjectCategory cat, bool on)
+    {
+        if (on) _enabled.Add(cat); else _enabled.Remove(cat);
+    }
+
+    private bool MatchesFilter(Row r)
+    {
+        if (!_enabled.Contains(r.Category)) return false;
+        if (string.IsNullOrWhiteSpace(_query)) return true;
+        return r.DisplayName.Contains(_query, StringComparison.OrdinalIgnoreCase)
+            || r.Wo.GId.Contains(_query, StringComparison.OrdinalIgnoreCase);
+    }
+}

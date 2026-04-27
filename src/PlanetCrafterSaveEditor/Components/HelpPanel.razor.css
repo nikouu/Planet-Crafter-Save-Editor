@@ -1,0 +1,22 @@
+.help-panel {
+    margin: 0.6rem 0 0;
+    background: #f3f5f7;
+    border: 1px solid #dcdfe3;
+    border-radius: 8px;
+    padding: 0.4rem 0.8rem;
+}
+
+.help-panel summary {
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.help-body { padding-top: 0.6rem; font-size: 0.9rem; }
+.help-body code { background: #e8eaee; padding: 0.05rem 0.3rem; border-radius: 4px; }
+.help-tip { color: #555; font-style: italic; }
+
+@media (prefers-color-scheme: dark) {
+    .help-panel { background: #20242a; border-color: #3a3f47; }
+    .help-body code { background: #2c313a; }
+    .help-tip { color: #a3a3a3; }
+}

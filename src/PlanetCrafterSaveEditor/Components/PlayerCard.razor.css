@@ -1,0 +1,35 @@
+.player-card {
+    background: #fff;
+    border: 1px solid #dcdfe3;
+    border-radius: 8px;
+    padding: 0.8rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.player-card header {
+    display: flex;
+    gap: 0.5rem;
+    align-items: baseline;
+    flex-wrap: wrap;
+}
+
+.name { font-weight: 600; font-size: 1.05rem; }
+.host-badge {
+    background: #1f3b4d;
+    color: #fff;
+    border-radius: 4px;
+    padding: 0 0.4rem;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+}
+.planet { color: #666; font-size: 0.9rem; }
+.position-row { display: flex; gap: 0.4rem; align-items: center; font-size: 0.9rem; }
+.position-row .label { color: #666; }
+
+@media (prefers-color-scheme: dark) {
+    .player-card { background: #20242a; border-color: #3a3f47; }
+    .planet, .position-row .label { color: #a3a3a3; }
+    .host-badge { background: #4ea1ff; color: #0e1419; }
+}
