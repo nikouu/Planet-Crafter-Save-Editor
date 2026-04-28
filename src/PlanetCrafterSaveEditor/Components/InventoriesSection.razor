@@ -3,8 +3,10 @@
 
 @if (Session.Save is { } save)
 {
-    var inventories = save.Inventories().ToList();
-    var labels = BuildLabels(save, inventories);
+    EnsureCache(save);
+    var inventories = _inventories!;
+    var labels = _labels!;
+    var wosById = _wosById!;
     var selected = _selectedId is { } id ? inventories.FirstOrDefault(i => i.Id == id) : null;
 
     <section class="section">
@@ -27,7 +29,7 @@
                 }
                 else
                 {
-                    <InventoryEditor Inventory="selected" AllInventories="inventories" Labels="labels" />
+                    <InventoryEditor Inventory="selected" AllInventories="inventories" Labels="labels" WosById="wosById" />
                 }
             </div>
         </div>
@@ -37,32 +39,68 @@
 @code {
     private long? _selectedId;
 
+    private SaveFile? _cachedSave;
+    private int _cachedEdit = -1;
+    private List<InventoryView>? _inventories;
+    private Dictionary<long, string>? _labels;
+    private Dictionary<long, WorldObjectView>? _wosById;
+
     protected override void OnInitialized() => Session.OnChanged += () => InvokeAsync(StateHasChanged);
 
     private void Select(long id) => _selectedId = id;
 
-    private Dictionary<long, string> BuildLabels(SaveFile save, List<InventoryView> invs)
+    private void EnsureCache(SaveFile save)
     {
-        var result = new Dictionary<long, string>();
-        var players = save.Players().ToList();
-        var wos = save.WorldObjects().ToList();
+        if (ReferenceEquals(_cachedSave, save) && _cachedEdit == Session.EditCounter)
+        {
+            return;
+        }
+        _cachedSave = save;
+        _cachedEdit = Session.EditCounter;
 
+        var rawInventories = save.Inventories().ToList();
+        _wosById = save.WorldObjects().ToDictionary(w => w.Id);
+        var players = save.Players().ToList();
+        _labels = BuildLabels(rawInventories, players, _wosById);
+        _inventories = rawInventories
+            .OrderByDescending(i => Rank(players, i.Id))
+            .ThenBy(i => _labels[i.Id], StringComparer.OrdinalIgnoreCase)
+            .ToList();
+    }
+
+    private static int Rank(List<PlayerView> players, long inventoryId)
+    {
+        foreach (var p in players)
+        {
+            if (p.InventoryId == inventoryId) return 3;
+            if (p.EquipmentId == inventoryId) return 2;
+        }
+        return 0;
+    }
+
+    private Dictionary<long, string> BuildLabels(
+        List<InventoryView> invs,
+        List<PlayerView> players,
+        Dictionary<long, WorldObjectView> wosById)
+    {
+        var byInv = new Dictionary<long, (PlayerView Player, bool IsEquip)>(players.Count * 2);
+        foreach (var p in players)
+        {
+            byInv[p.InventoryId] = (p, false);
+            byInv[p.EquipmentId] = (p, true);
+        }
+
+        var result = new Dictionary<long, string>(invs.Count);
         foreach (var inv in invs)
         {
-            var asPlayerInv = players.FirstOrDefault(p => p.InventoryId == inv.Id);
-            if (asPlayerInv is not null)
+            if (byInv.TryGetValue(inv.Id, out var owner))
             {
-                result[inv.Id] = $"{asPlayerInv.Name}'s inventory";
+                result[inv.Id] = owner.IsEquip
+                    ? $"{owner.Player.Name}'s equipment"
+                    : $"{owner.Player.Name}'s inventory";
                 continue;
             }
-            var asPlayerEquip = players.FirstOrDefault(p => p.EquipmentId == inv.Id);
-            if (asPlayerEquip is not null)
-            {
-                result[inv.Id] = $"{asPlayerEquip.Name}'s equipment";
-                continue;
-            }
-            var asWo = wos.FirstOrDefault(w => w.Id == inv.Id);
-            if (asWo is not null)
+            if (wosById.TryGetValue(inv.Id, out var asWo))
             {
                 var name = Namer.Display(asWo.GId);
                 result[inv.Id] = asWo.HasPosition

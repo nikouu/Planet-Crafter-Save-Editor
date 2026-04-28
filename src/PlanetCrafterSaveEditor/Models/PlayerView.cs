@@ -11,8 +11,7 @@ public sealed class PlayerView
     public PlayerView(SaveRecord record)
     {
         _record = record;
-        _json = JsonNode.Parse(record.OriginalText) as JsonObject
-            ?? throw new FormatException("Player record is not a JSON object.");
+        _json = record.GetJson();
     }
 
     public SaveRecord Record => _record;

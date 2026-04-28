@@ -1,5 +1,8 @@
+@using System.Text.Json
+@using System.Text.Json.Nodes
 @inject SaveSession Session
 @inject IJSRuntime JS
+@inject GIdNamer Namer
 
 @if (Session.Save is not null)
 {
@@ -8,6 +11,9 @@
             @if (Session.IsDirty)
             {
                 <span class="pending">@DirtyCount edit@(DirtyCount == 1 ? "" : "s") pending</span>
+                <button class="btn ghost view-toggle" @onclick="OpenModal">
+                    View changes
+                </button>
             }
             else
             {
@@ -26,12 +32,156 @@
     </div>
 }
 
+@if (_showModal)
+{
+    <div class="modal-backdrop" @onclick="CloseModal">
+        <div class="modal" @onclick:stopPropagation="true">
+            <header class="modal-header">
+                <h3>Pending changes</h3>
+                <button class="btn ghost modal-close" @onclick="CloseModal">Close</button>
+            </header>
+            <div class="modal-body">
+                @if (!_changes.Any())
+                {
+                    <p class="empty">No edits yet.</p>
+                }
+                else
+                {
+                    @foreach (var group in _changes)
+                    {
+                        <div class="change-group">
+                            <h4>@group.Title</h4>
+                            <table class="change-table">
+                                <thead>
+                                    <tr>
+                                        <th>Field</th>
+                                        <th>Before</th>
+                                        <th>After</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var row in group.Rows)
+                                    {
+                                        <tr>
+                                            <td class="field">@row.Field</td>
+                                            <td class="before">@row.Before</td>
+                                            <td class="after">@row.After</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+}
+
 @code {
     private string? _error;
+    private bool _showModal;
+    private List<ChangeGroup> _changes = new();
 
     protected override void OnInitialized() => Session.OnChanged += () => InvokeAsync(StateHasChanged);
 
     private int DirtyCount => Session.Save?.Records.Count(r => r.IsDirty) ?? 0;
+
+    private void OpenModal()
+    {
+        _changes = BuildChanges().ToList();
+        _showModal = true;
+    }
+
+    private void CloseModal() => _showModal = false;
+
+    private IEnumerable<ChangeGroup> BuildChanges()
+    {
+        var save = Session.Save;
+        if (save is null) yield break;
+
+        foreach (var (_, section, record) in save.EnumerateBySection())
+        {
+            if (!record.IsDirty) continue;
+            var title = TitleFor(section, record);
+
+            if (record.OriginalSnapshot is null)
+            {
+                yield return new ChangeGroup(title, new List<ChangeRow>
+                {
+                    new("(record)", "—", "added"),
+                });
+                continue;
+            }
+
+            var rows = DiffRecord(record.OriginalSnapshot, record.OriginalText).ToList();
+            if (rows.Count == 0)
+            {
+                rows.Add(new ChangeRow("(record)", "unchanged", "unchanged"));
+            }
+            yield return new ChangeGroup(title, rows);
+        }
+    }
+
+    private string TitleFor(SaveSection section, SaveRecord record)
+    {
+        try
+        {
+            return section switch
+            {
+                SaveSection.Players => $"Player {new PlayerView(record).Name}",
+                SaveSection.WorldObjects => $"{Namer.Display(new WorldObjectView(record).GId)} (#{new WorldObjectView(record).Id})",
+                SaveSection.Inventories => $"Inventory #{new InventoryView(record).Id}",
+                _ => $"{section} record",
+            };
+        }
+        catch
+        {
+            return $"{section} record";
+        }
+    }
+
+    private static IEnumerable<ChangeRow> DiffRecord(string before, string after)
+    {
+        JsonObject? a = null;
+        JsonObject? b = null;
+        var parsed = false;
+        try
+        {
+            a = JsonNode.Parse(before) as JsonObject;
+            b = JsonNode.Parse(after) as JsonObject;
+            parsed = a is not null && b is not null;
+        }
+        catch
+        {
+            parsed = false;
+        }
+        if (!parsed || a is null || b is null)
+        {
+            yield return new ChangeRow("(raw)", before, after);
+            yield break;
+        }
+
+        var keys = new List<string>();
+        foreach (var k in b) if (!keys.Contains(k.Key)) keys.Add(k.Key);
+        foreach (var k in a) if (!keys.Contains(k.Key)) keys.Add(k.Key);
+
+        foreach (var key in keys)
+        {
+            var beforeVal = a.TryGetPropertyValue(key, out var av) ? RenderValue(av) : "(absent)";
+            var afterVal = b.TryGetPropertyValue(key, out var bv) ? RenderValue(bv) : "(absent)";
+            if (beforeVal != afterVal)
+            {
+                yield return new ChangeRow(key, beforeVal, afterVal);
+            }
+        }
+    }
+
+    private static string RenderValue(JsonNode? node)
+    {
+        if (node is null) return "null";
+        return node.ToJsonString();
+    }
 
     private async Task Download()
     {
@@ -62,4 +212,7 @@
         var name = stem + ext;
         return string.IsNullOrEmpty(dir) ? name : Path.Combine(dir, name);
     }
+
+    private sealed record ChangeGroup(string Title, List<ChangeRow> Rows);
+    private sealed record ChangeRow(string Field, string Before, string After);
 }

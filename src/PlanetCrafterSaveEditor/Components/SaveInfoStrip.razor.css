@@ -1,46 +1,46 @@
 .save-info {
     display: flex;
     flex-wrap: wrap;
-    gap: 1rem;
-    background: #fff;
-    border: 1px solid #dcdfe3;
-    border-radius: 8px;
-    padding: 0.7rem 1rem;
-    margin: 1rem 0;
+    gap: 1.6rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius-lg);
+    padding: 0.85rem 1.1rem;
+    box-shadow: var(--shadow-sm);
+    align-items: center;
 }
 
 .save-info-cell {
     display: flex;
     flex-direction: column;
+    gap: 0.1rem;
 }
 
 .label {
     font-size: 0.7rem;
     text-transform: uppercase;
-    color: #666;
-    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    letter-spacing: 0.06em;
+    font-weight: 600;
 }
 
-.value { font-weight: 600; }
+.value {
+    font-weight: 600;
+    color: var(--text);
+}
 
 .player-badge {
     display: inline-block;
-    padding: 0.1rem 0.45rem;
-    border-radius: 4px;
-    background: #e0e7ee;
-    color: #1f3b4d;
-    font-size: 0.85rem;
-    margin-right: 0.25rem;
+    padding: 0.15rem 0.5rem;
+    border-radius: 999px;
+    background: var(--bg-inset);
+    color: var(--text-soft);
+    font-size: 0.78rem;
+    font-weight: 500;
+    margin-right: 0.3rem;
 }
 
 .player-badge.host {
-    background: #1f3b4d;
+    background: var(--accent);
     color: #fff;
-}
-
-@media (prefers-color-scheme: dark) {
-    .save-info { background: #20242a; border-color: #3a3f47; }
-    .label { color: #a3a3a3; }
-    .player-badge { background: #2c313a; color: #d6e4ee; }
-    .player-badge.host { background: #4ea1ff; color: #0e1419; }
 }

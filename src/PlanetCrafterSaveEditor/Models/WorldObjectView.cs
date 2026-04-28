@@ -10,8 +10,7 @@ public sealed class WorldObjectView
     public WorldObjectView(SaveRecord record)
     {
         _record = record;
-        _json = JsonNode.Parse(record.OriginalText) as JsonObject
-            ?? throw new FormatException("WorldObject record is not a JSON object.");
+        _json = record.GetJson();
     }
 
     public SaveRecord Record => _record;

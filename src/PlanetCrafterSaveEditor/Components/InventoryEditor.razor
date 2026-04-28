@@ -7,16 +7,13 @@
         <span class="fill">@Inventory.WoIds.Count / @Inventory.Size</span>
     </header>
 
-    @{
-        var save = Session.Save!;
-        var allWos = save.WorldObjects().ToDictionary(w => w.Id);
-    }
-
     <ul class="slots">
+        @{ var _slotIdx = 0; }
         @foreach (var woId in Inventory.WoIds)
         {
-            <li class="slot">
-                @if (allWos.TryGetValue(woId, out var wo))
+            var slotKey = $"{_slotIdx++}:{woId}";
+            <li class="slot" @key="slotKey">
+                @if (WosById.TryGetValue(woId, out var wo))
                 {
                     <div class="slot-info">
                         <span class="slot-name">@Namer.Display(wo.GId)</span>
@@ -35,11 +32,11 @@
                         }
                     </div>
                     <div class="slot-actions">
-                        <select class="move-target" @onchange="(e) => Move(wo.Id, e.Value?.ToString())">
+                        <select class="move-target" value="" @onchange="(e) => Move(wo.Id, e.Value?.ToString())">
                             <option value="">Move to…</option>
-                            @foreach (var inv in AllInventories.Where(i => i.Id != Inventory.Id))
+                            @foreach (var (id, label) in _moveTargets)
                             {
-                                <option value="@inv.Id">@Labels[inv.Id]</option>
+                                <option value="@id">@label</option>
                             }
                         </select>
                         <button class="btn danger" @onclick="() => Remove(woId)">Remove</button>
@@ -54,9 +51,9 @@
     </ul>
 
     <div class="add-row">
-        <input list="gid-suggestions" placeholder="gId (e.g. TrashMetalsScraps1)" @bind="_addGId" class="add-input" />
+        <input type="text" list="gid-suggestions" placeholder="gId (e.g. TrashMetalsScraps1)" @bind="_addGId" class="add-input" />
         <datalist id="gid-suggestions">
-            @foreach (var g in Namer.KnownGIds.OrderBy(s => s))
+            @foreach (var g in _sortedGIds)
             {
                 <option value="@g">@Namer.Display(g)</option>
             }
@@ -73,9 +70,33 @@
     [Parameter, EditorRequired] public InventoryView Inventory { get; set; } = default!;
     [Parameter, EditorRequired] public List<InventoryView> AllInventories { get; set; } = new();
     [Parameter, EditorRequired] public Dictionary<long, string> Labels { get; set; } = new();
+    [Parameter, EditorRequired] public Dictionary<long, WorldObjectView> WosById { get; set; } = new();
 
     private string _addGId = "";
     private string? _error;
+    private List<(long Id, string Label)> _moveTargets = new();
+    private List<string> _sortedGIds = new();
+    private long _lastInventoryId;
+    private int _lastAllInvCount;
+
+    protected override void OnParametersSet()
+    {
+        // Rebuild move-target list only when the inventory changes or count changes.
+        if (_lastInventoryId != Inventory.Id || _lastAllInvCount != AllInventories.Count)
+        {
+            _lastInventoryId = Inventory.Id;
+            _lastAllInvCount = AllInventories.Count;
+            _moveTargets = AllInventories
+                .Where(i => i.Id != Inventory.Id)
+                .Select(i => (i.Id, Labels.TryGetValue(i.Id, out var l) ? l : $"#{i.Id}"))
+                .ToList();
+        }
+
+        if (_sortedGIds.Count == 0)
+        {
+            _sortedGIds = Namer.KnownGIds.OrderBy(s => s, StringComparer.OrdinalIgnoreCase).ToList();
+        }
+    }
 
     private void Remove(long woId)
     {

@@ -1,12 +1,41 @@
-<details class="help-panel">
-    <summary>Where is my save file?</summary>
-    <div class="help-body">
-        <p>Planet Crafter save files (<code>save_*.json</code>) live here:</p>
-        <ul>
-            <li><strong>Windows:</strong> <code>%USERPROFILE%\AppData\LocalLow\MijuGames\Planet Crafter\Saves</code></li>
-            <li><strong>Linux (Steam Proton):</strong> <code>~/.steam/steam/steamapps/compatdata/1284190/pfx/drive_c/users/steamuser/AppData/LocalLow/MijuGames/Planet Crafter/Saves</code></li>
-            <li><strong>macOS (Steam):</strong> <code>~/Library/Application Support/MijuGames/Planet Crafter/Saves</code></li>
-        </ul>
-        <p class="help-tip">Tip: copy the file before editing, just in case.</p>
+@inject IJSRuntime JS
+
+<div class="help-panel">
+    <h3>Where is my save file?</h3>
+    <p class="help-intro">Planet Crafter save files are named <code>save_*.json</code>. Pick your platform:</p>
+    <div class="path-list">
+        @foreach (var entry in _entries)
+        {
+            <div class="path-row">
+                <div class="path-platform">@entry.Platform</div>
+                <code class="path-value">@entry.Path</code>
+                <button class="btn ghost copy-btn" @onclick="() => Copy(entry.Path)" title="Copy path">
+                    @(_copiedPath == entry.Path ? "Copied" : "Copy")
+                </button>
+            </div>
+        }
     </div>
-</details>
+    <p class="help-tip">Tip: copy the file before editing, just in case.</p>
+</div>
+
+@code {
+    private record PathEntry(string Platform, string Path);
+
+    private readonly PathEntry[] _entries = new[]
+    {
+        new PathEntry("Windows", @"%USERPROFILE%\AppData\LocalLow\MijuGames\Planet Crafter\Saves"),
+        new PathEntry("Steam (Proton)", @"~/.steam/steam/steamapps/compatdata/1284190/pfx/drive_c/users/steamuser/AppData/LocalLow/MijuGames/Planet Crafter/Saves"),
+        new PathEntry("macOS", @"~/Library/Application Support/MijuGames/Planet Crafter/Saves"),
+    };
+
+    private string? _copiedPath;
+
+    private async Task Copy(string path)
+    {
+        await JS.InvokeVoidAsync("pcseInterop.copyText", path);
+        _copiedPath = path;
+        StateHasChanged();
+        await Task.Delay(1500);
+        if (_copiedPath == path) { _copiedPath = null; StateHasChanged(); }
+    }
+}

@@ -4,13 +4,10 @@
 
 @if (Session.Save is { } save)
 {
+    EnsureBaseRows(save);
     var meta = save.SaveMeta();
     var planetId = meta?.PlanetId ?? "";
-    var rows = save.WorldObjects()
-        .Where(w => w.HasPosition)
-        .Select(w => new Row(w, Categorizer.Categorize(w), Namer.Display(w.GId)))
-        .Where(MatchesFilter)
-        .ToList();
+    var rows = _baseRows!.Where(MatchesFilter).ToList();
 
     <section class="section">
         <h2>Containers, items &amp; vehicles</h2>
@@ -27,7 +24,7 @@
         </div>
 
         <div class="wo-list">
-            <Virtualize Items="rows" Context="row" ItemSize="68">
+            <Virtualize Items="rows" Context="row" ItemSize="96">
                 <WorldObjectRow Row="row" PlanetId="@planetId" />
             </Virtualize>
         </div>
@@ -46,7 +43,26 @@
         WorldObjectCategory.Drop,
     };
 
+    private SaveFile? _cachedSave;
+    private int _cachedEdit = -1;
+    private List<Row>? _baseRows;
+
     protected override void OnInitialized() => Session.OnChanged += () => InvokeAsync(StateHasChanged);
+
+    private void EnsureBaseRows(SaveFile save)
+    {
+        if (ReferenceEquals(_cachedSave, save) && _cachedEdit == Session.EditCounter)
+        {
+            return;
+        }
+        _cachedSave = save;
+        _cachedEdit = Session.EditCounter;
+        _baseRows = save.WorldObjects()
+            .Where(w => w.HasPosition)
+            .Where(w => !w.GId.StartsWith("EscapePod", StringComparison.Ordinal))
+            .Select(w => new Row(w, Categorizer.Categorize(w), Namer.Display(w.GId)))
+            .ToList();
+    }
 
     private bool IsEnabled(WorldObjectCategory cat) => _enabled.Contains(cat);
 

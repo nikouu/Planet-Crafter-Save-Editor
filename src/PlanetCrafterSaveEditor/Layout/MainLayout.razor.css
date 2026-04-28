@@ -2,62 +2,82 @@
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    background: #fafafa;
-    color: #1c1c1c;
 }
 
 .app-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 1rem 1.25rem;
-    background: linear-gradient(135deg, #1f3b4d, #0f2230);
-    color: #fff;
+    gap: 1rem;
+    padding: 0.9rem 1.5rem;
+    background:
+        radial-gradient(circle at 20% 0%, rgba(201, 87, 43, 0.35), transparent 55%),
+        linear-gradient(135deg, var(--header-from) 0%, var(--header-to) 100%);
+    color: var(--header-fg);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.4);
 }
 
+.app-header-inner { display: flex; flex-direction: column; gap: 0.1rem; }
 .app-header h1 {
-    font-size: 1.4rem;
+    font-size: 1.25rem;
     margin: 0;
+    color: var(--header-fg);
+    letter-spacing: -0.01em;
 }
 
 .tagline {
-    margin: 0.1rem 0 0;
-    color: #b9d7e6;
-    font-size: 0.9rem;
+    margin: 0;
+    color: var(--header-fg-soft);
+    font-size: 0.85rem;
 }
 
 .repo-link {
-    color: #b9d7e6;
-    font-weight: 600;
+    color: var(--header-fg-soft);
+    font-weight: 500;
+    text-decoration: none;
+    padding: 0.4rem 0.8rem;
+    border: 1px solid rgba(255, 226, 196, 0.25);
+    border-radius: 999px;
+    transition: background 0.12s, color 0.12s, border-color 0.12s;
+}
+
+.repo-link:hover {
+    background: rgba(255, 226, 196, 0.15);
+    color: var(--header-fg);
+    border-color: rgba(255, 226, 196, 0.4);
     text-decoration: none;
 }
 
-.repo-link:hover { color: #fff; text-decoration: underline; }
-
 .banner {
-    background: #fff8d6;
-    color: #5a4500;
-    padding: 0.5rem 1.25rem;
-    font-size: 0.9rem;
-    border-bottom: 1px solid #f1de9a;
+    background: var(--warn-bg);
+    color: var(--warn-fg);
+    padding: 0.5rem 1.5rem;
+    font-size: 0.85rem;
+    border-bottom: 1px solid var(--warn-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
 }
 
-.banner code {
-    background: #fff1b3;
-    padding: 0.05rem 0.3rem;
-    border-radius: 3px;
+.version-tag {
+    color: var(--warn-fg);
+    opacity: 0.8;
+    font-size: 0.78rem;
+}
+
+.banner ::deep code {
+    background: rgba(0, 0, 0, 0.07);
+    color: inherit;
 }
 
 .app-main {
     flex: 1;
-    max-width: 1100px;
+    max-width: 1180px;
     width: 100%;
     margin: 0 auto;
-    padding: 1.25rem 1.25rem 5rem;
-}
-
-@media (prefers-color-scheme: dark) {
-    .app-shell { background: #1a1d20; color: #e6e6e6; }
-    .banner { background: #3a2f00; color: #f6e08c; border-bottom-color: #5a4500; }
-    .banner code { background: #5a4500; }
+    padding: 1.25rem 1.25rem 6rem;
+    display: flex;
+    flex-direction: column;
 }

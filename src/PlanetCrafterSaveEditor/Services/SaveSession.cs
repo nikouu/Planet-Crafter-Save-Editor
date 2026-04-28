@@ -12,6 +12,8 @@ public sealed class SaveSession
 
     public event Action? OnChanged;
 
+    public int EditCounter { get; private set; }
+
     public bool IsDirty => Save is not null && Save.Records.Any(r => r.IsDirty);
 
     public void Load(byte[] bytes, string fileName)
@@ -218,5 +220,9 @@ public sealed class SaveSession
     private SaveFile RequireSave()
         => Save ?? throw new InvalidOperationException("No save loaded.");
 
-    private void Notify() => OnChanged?.Invoke();
+    private void Notify()
+    {
+        EditCounter++;
+        OnChanged?.Invoke();
+    }
 }

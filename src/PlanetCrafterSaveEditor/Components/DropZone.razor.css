@@ -1,43 +1,136 @@
 .dropzone {
     position: relative;
-    border: 2px dashed #b6b6b6;
-    border-radius: 10px;
-    background: #fff;
-    padding: 2rem 1rem;
+    border: 2px dashed var(--border);
+    border-radius: var(--radius-lg);
+    background: var(--bg-soft);
+    padding: 2.6rem 1.5rem 3.6rem;
     text-align: center;
-    transition: all .15s ease-in-out;
+    transition: background 0.15s, border-color 0.15s;
+}
+
+.dropzone:hover {
+    border-color: var(--accent);
+    background: var(--accent-bg);
 }
 
 .dropzone-over {
-    background: #e8f3ff;
-    border-color: #1f7fdc;
+    background: var(--accent-bg);
+    border-color: var(--accent);
+    border-style: solid;
 }
 
-.dropzone-input {
-    position: absolute;
-    inset: 0;
-    opacity: 0;
-    cursor: pointer;
-}
+/* .dropzone-input rule lives in wwwroot/css/app.css — scoped CSS doesn't reach
+   the <input> rendered inside <InputFile>'s component scope. */
 
 .dropzone-label {
     display: flex;
     flex-direction: column;
-    gap: 0.3rem;
+    align-items: center;
+    gap: 0.35rem;
     pointer-events: none;
 }
 
-.dropzone-label strong { font-size: 1.1rem; }
-.dropzone-hint { font-size: 0.85rem; color: #666; }
+.dropzone-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    margin-bottom: 0.5rem;
+    color: var(--accent);
+    background: var(--bg-card);
+    border: 1px solid var(--border-soft);
+    border-radius: 50%;
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.18s, color 0.15s;
+}
+
+.dropzone-icon svg {
+    width: 1.45rem;
+    height: 1.45rem;
+}
+
+.dropzone:hover .dropzone-icon,
+.dropzone-over .dropzone-icon {
+    transform: translateY(-2px);
+    color: var(--accent-hover);
+}
+
+.dropzone-title {
+    font-size: 1.1rem;
+    color: var(--text);
+}
+
+.dropzone-sub {
+    font-size: 0.92rem;
+    color: var(--text-soft);
+}
+
+.dropzone-cta {
+    color: var(--accent);
+    font-weight: 600;
+    text-decoration: underline;
+    text-decoration-style: dotted;
+    text-underline-offset: 3px;
+}
+
+.dropzone-hint {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    margin-top: 0.1rem;
+}
 
 .dropzone-error {
-    margin: 0.6rem 0 0;
-    color: #b00020;
+    margin: 0.8rem 0 0;
+    color: #c0392b;
     font-size: 0.9rem;
 }
 
-@media (prefers-color-scheme: dark) {
-    .dropzone { background: #25282b; border-color: #555; color: #e6e6e6; }
-    .dropzone-over { background: #1d3a55; border-color: #4ea1ff; }
-    .dropzone-hint { color: #a3a3a3; }
+.dropzone-loaded-badge {
+    position: absolute;
+    bottom: 0.7rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    max-width: calc(100% - 2rem);
+    padding: 0.3rem 0.7rem 0.3rem 0.55rem;
+    background: var(--secondary-bg);
+    color: var(--secondary);
+    border: 1px solid var(--secondary);
+    border-radius: 999px;
+    font-size: 0.82rem;
+    pointer-events: none;
+    box-shadow: var(--shadow-sm);
+}
+
+.dropzone-loaded-check {
+    width: 0.95rem;
+    height: 0.95rem;
+    flex: 0 0 auto;
+}
+
+.dropzone-loaded-text {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.4rem;
+    min-width: 0;
+}
+
+.dropzone-loaded-label {
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    font-size: 0.7rem;
+}
+
+.dropzone-loaded-name {
+    color: var(--text);
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
 }

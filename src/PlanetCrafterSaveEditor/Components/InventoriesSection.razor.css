@@ -1,10 +1,10 @@
 .inv-layout {
     display: grid;
-    grid-template-columns: minmax(220px, 320px) 1fr;
-    gap: 1rem;
-    background: #fff;
-    border: 1px solid #dcdfe3;
-    border-radius: 8px;
+    grid-template-columns: minmax(240px, 320px) 1fr;
+    gap: 0;
+    background: var(--bg-card);
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius);
     overflow: hidden;
 }
 
@@ -12,35 +12,46 @@
     list-style: none;
     padding: 0;
     margin: 0;
-    border-right: 1px solid #ececec;
+    border-right: 1px solid var(--border-soft);
     max-height: 480px;
     overflow-y: auto;
+    background: var(--bg-soft);
 }
 
 .inv-list li {
     display: flex;
     justify-content: space-between;
-    padding: 0.5rem 0.75rem;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.55rem 0.9rem;
     cursor: pointer;
-    border-bottom: 1px solid #f0f1f3;
-    font-size: 0.9rem;
+    border-bottom: 1px solid var(--border-soft);
+    font-size: 0.88rem;
+    color: var(--text-soft);
+    transition: background 0.1s, color 0.1s;
 }
 
-.inv-list li:hover { background: #f3f5f7; }
-.inv-list li.selected { background: #1f7fdc; color: #fff; }
-.inv-list li.selected .inv-fill { color: #d8e8f8; }
+.inv-list li:hover { background: var(--bg-inset); color: var(--text); }
 
-.inv-fill { color: #666; font-variant-numeric: tabular-nums; }
-
-.inv-detail { padding: 0.8rem 1rem; }
-
-.hint { color: #666; font-style: italic; }
-
-@media (prefers-color-scheme: dark) {
-    .inv-layout { background: #20242a; border-color: #3a3f47; }
-    .inv-list { border-right-color: #2c313a; }
-    .inv-list li { border-bottom-color: #2c313a; color: #e6e6e6; }
-    .inv-list li:hover { background: #2c313a; }
-    .inv-fill { color: #a3a3a3; }
-    .hint { color: #a3a3a3; }
+.inv-list li.selected {
+    background: var(--accent);
+    color: #fff;
 }
+.inv-list li.selected .inv-fill { color: rgba(255, 255, 255, 0.8); }
+
+.inv-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1;
+}
+
+.inv-fill {
+    color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
+    font-size: 0.8rem;
+}
+
+.inv-detail { padding: 1rem 1.2rem; min-height: 480px; max-height: 480px; overflow-y: auto; }
+
+.hint { color: var(--text-muted); font-style: italic; }

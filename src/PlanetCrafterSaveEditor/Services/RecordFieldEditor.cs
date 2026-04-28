@@ -7,26 +7,39 @@ internal static class RecordFieldEditor
 {
     public static void SetStringField(SaveRecord record, string fieldName, string newValue)
     {
-        var pattern = "\"" + Regex.Escape(fieldName) + "\":\"(?:[^\"\\\\]|\\\\.)*\"";
+        var pattern = "\"" + Regex.Escape(fieldName) + "\"\\s*:\\s*\"(?:[^\"\\\\]|\\\\.)*\"";
         var replacement = "\"" + fieldName + "\":\"" + EscapeJsonString(newValue) + "\"";
-        var updated = Regex.Replace(record.OriginalText, pattern, replacement, RegexOptions.None, TimeSpan.FromSeconds(1));
-        if (ReferenceEquals(updated, record.OriginalText) || updated == record.OriginalText)
+        var regex = new Regex(pattern, RegexOptions.None, TimeSpan.FromSeconds(1));
+        if (!regex.IsMatch(record.OriginalText))
         {
             throw new InvalidOperationException($"Field '{fieldName}' not found in record.");
         }
+        var updated = regex.Replace(record.OriginalText, replacement);
+        if (updated == record.OriginalText)
+        {
+            // Field exists but value unchanged — no-op.
+            return;
+        }
+        record.OriginalSnapshot ??= record.OriginalText;
         record.OriginalText = updated;
         record.IsDirty = true;
     }
 
     public static void SetNumberField(SaveRecord record, string fieldName, string newLiteral)
     {
-        var pattern = "\"" + Regex.Escape(fieldName) + "\":-?\\d+(?:\\.\\d+)?(?:[eE][+-]?\\d+)?";
+        var pattern = "\"" + Regex.Escape(fieldName) + "\"\\s*:\\s*-?\\d+(?:\\.\\d+)?(?:[eE][+-]?\\d+)?";
         var replacement = "\"" + fieldName + "\":" + newLiteral;
-        var updated = Regex.Replace(record.OriginalText, pattern, replacement, RegexOptions.None, TimeSpan.FromSeconds(1));
-        if (updated == record.OriginalText)
+        var regex = new Regex(pattern, RegexOptions.None, TimeSpan.FromSeconds(1));
+        if (!regex.IsMatch(record.OriginalText))
         {
             throw new InvalidOperationException($"Field '{fieldName}' not found in record.");
         }
+        var updated = regex.Replace(record.OriginalText, replacement);
+        if (updated == record.OriginalText)
+        {
+            return;
+        }
+        record.OriginalSnapshot ??= record.OriginalText;
         record.OriginalText = updated;
         record.IsDirty = true;
     }
