@@ -1,6 +1,7 @@
 @inject SaveSession Session
 @inject WorldObjectCategorizer Categorizer
 @inject GIdNamer Namer
+@implements IDisposable
 
 @if (Session.Save is { } save)
 {
@@ -19,7 +20,7 @@
                     @cat
                 </label>
             }
-            <input type="search" placeholder="Search name or gId" @bind="_query" @bind:event="oninput" class="search" />
+            <input type="search" placeholder="Search name or gId" value="@_queryInput" @oninput="OnQueryInput" class="search" />
             <span class="count">@rows.Count shown</span>
         </div>
 
@@ -35,6 +36,10 @@
     public record Row(WorldObjectView Wo, WorldObjectCategory Category, string DisplayName);
 
     private string _query = "";
+    private string _queryInput = "";
+    private CancellationTokenSource? _debounceCts;
+    private const int DebounceMs = 180;
+
     private readonly HashSet<WorldObjectCategory> _enabled = new()
     {
         WorldObjectCategory.Container,
@@ -69,6 +74,28 @@
     private void Toggle(WorldObjectCategory cat, bool on)
     {
         if (on) _enabled.Add(cat); else _enabled.Remove(cat);
+    }
+
+    private async Task OnQueryInput(ChangeEventArgs e)
+    {
+        _queryInput = e.Value?.ToString() ?? "";
+        _debounceCts?.Cancel();
+        _debounceCts?.Dispose();
+        _debounceCts = new CancellationTokenSource();
+        var token = _debounceCts.Token;
+        try
+        {
+            await Task.Delay(DebounceMs, token);
+            _query = _queryInput;
+            StateHasChanged();
+        }
+        catch (TaskCanceledException) { }
+    }
+
+    public void Dispose()
+    {
+        _debounceCts?.Cancel();
+        _debounceCts?.Dispose();
     }
 
     private bool MatchesFilter(Row r)

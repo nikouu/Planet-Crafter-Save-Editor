@@ -1,0 +1,70 @@
+name: Bug report
+description: Something didn't work — a save wouldn't load, an edit didn't take effect, or the page broke.
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting! A few quick questions — most are optional.
+
+        **Important:** if you're attaching a save file, please check it for anything sensitive (player names, etc.) before posting. GitHub issues are public.
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: A short description of the problem in your own words.
+      placeholder: "I tried to teleport my death chest and the page didn't do anything."
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect to happen?
+      placeholder: "The chest should have moved to my coordinates."
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: List what you clicked / dragged in order, if you can.
+      placeholder: |
+        1. Loaded my save
+        2. Found the chest in the Containers list
+        3. Clicked Teleport with mode set to "Custom coords"
+        4. ...
+
+  - type: dropdown
+    id: browser
+    attributes:
+      label: Browser
+      options:
+        - Chrome / Edge / other Chromium
+        - Firefox
+        - Safari
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: game-version
+    attributes:
+      label: Planet Crafter version (if you know it)
+      placeholder: "e.g. 1.405"
+
+  - type: textarea
+    id: save-file
+    attributes:
+      label: Save file (optional)
+      description: |
+        If the bug involves a specific save, drag and drop it here to attach it.
+        GitHub doesn't accept `.json` directly — rename to `.txt` or zip it first.
+        Only attach a save if you're comfortable with it being public.
+
+  - type: textarea
+    id: extras
+    attributes:
+      label: Anything else?
+      description: Screenshots, or other notes.

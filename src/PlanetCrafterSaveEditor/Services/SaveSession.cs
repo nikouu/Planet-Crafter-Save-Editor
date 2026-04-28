@@ -149,6 +149,19 @@ public sealed class SaveSession
         return newId;
     }
 
+    public void RenameSave(string newName)
+    {
+        var save = RequireSave();
+        var meta = save.SaveMeta()
+            ?? throw new InvalidOperationException("Save metadata record not found.");
+        if (string.IsNullOrWhiteSpace(newName))
+        {
+            throw new ArgumentException("Save name cannot be empty.", nameof(newName));
+        }
+        RecordFieldEditor.SetStringField(meta.Record, "saveDisplayName", newName);
+        Notify();
+    }
+
     public void SetCount(long worldObjectId, string countLiteral)
     {
         var save = RequireSave();

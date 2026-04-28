@@ -11,9 +11,32 @@
         </div>
         @if (meta is not null)
         {
-            <div class="save-info-cell">
+            <div class="save-info-cell save-name-cell">
                 <span class="label">Save name</span>
-                <span class="value">@meta.SaveDisplayName</span>
+                @if (_editing)
+                {
+                    <span class="save-name-edit">
+                        <input class="save-name-input"
+                               type="text"
+                               @bind="_draft"
+                               @bind:event="oninput"
+                               @ref="_inputRef"
+                               @onkeydown="OnInputKey" />
+                        <button class="btn primary save-name-btn" @onclick="() => Save(meta)">Save</button>
+                        <button class="btn ghost save-name-btn" @onclick="Cancel">Cancel</button>
+                    </span>
+                }
+                else
+                {
+                    <span class="save-name-view">
+                        <span class="value">@meta.SaveDisplayName</span>
+                        <button class="btn ghost save-name-btn" @onclick="() => StartEdit(meta)">Rename</button>
+                    </span>
+                }
+                @if (_error is not null)
+                {
+                    <span class="save-name-error">@_error</span>
+                }
             </div>
             <div class="save-info-cell">
                 <span class="label">Planet</span>
@@ -41,5 +64,67 @@
 }
 
 @code {
+    private bool _editing;
+    private string _draft = "";
+    private string? _error;
+    private ElementReference _inputRef;
+    private bool _shouldFocus;
+
     protected override void OnInitialized() => Session.OnChanged += () => InvokeAsync(StateHasChanged);
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (_shouldFocus)
+        {
+            _shouldFocus = false;
+            try { await _inputRef.FocusAsync(); } catch { }
+        }
+    }
+
+    private void StartEdit(Models.SaveMetaView meta)
+    {
+        _draft = meta.SaveDisplayName;
+        _error = null;
+        _editing = true;
+        _shouldFocus = true;
+    }
+
+    private void Cancel()
+    {
+        _editing = false;
+        _error = null;
+    }
+
+    private void Save(Models.SaveMetaView meta)
+    {
+        _error = null;
+        var trimmed = _draft.Trim();
+        if (string.IsNullOrEmpty(trimmed))
+        {
+            _error = "Save name cannot be empty.";
+            return;
+        }
+        try
+        {
+            Session.RenameSave(trimmed);
+            _editing = false;
+        }
+        catch (Exception ex)
+        {
+            _error = ex.Message;
+        }
+    }
+
+    private void OnInputKey(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            var meta = Session.Save?.SaveMeta();
+            if (meta is not null) Save(meta);
+        }
+        else if (e.Key == "Escape")
+        {
+            Cancel();
+        }
+    }
 }

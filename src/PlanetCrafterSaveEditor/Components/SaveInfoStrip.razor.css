@@ -44,3 +44,28 @@
     background: var(--accent);
     color: #fff;
 }
+
+.save-name-cell { min-width: 21rem; }
+
+.save-name-view,
+.save-name-edit {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.save-name-input {
+    min-width: 11rem;
+    font-weight: 600;
+}
+
+.save-name-btn {
+    padding: 0.15rem 0.55rem;
+    font-size: 0.78rem;
+}
+
+.save-name-error {
+    color: #c0392b;
+    font-size: 0.78rem;
+    margin-top: 0.15rem;
+}

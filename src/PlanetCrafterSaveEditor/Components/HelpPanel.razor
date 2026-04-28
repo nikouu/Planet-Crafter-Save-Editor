@@ -2,7 +2,7 @@
 
 <div class="help-panel">
     <h3>Where is my save file?</h3>
-    <p class="help-intro">Planet Crafter save files are named <code>save_*.json</code>. Pick your platform:</p>
+    <p class="help-intro">Planet Crafter saves are named <code>{GameMode}-{Slot}.json</code> (e.g. <code>Standard-1.json</code>), plus a <code>Backup.json</code>. Pick your platform:</p>
     <div class="path-list">
         @foreach (var entry in _entries)
         {
@@ -23,9 +23,9 @@
 
     private readonly PathEntry[] _entries = new[]
     {
-        new PathEntry("Windows", @"%USERPROFILE%\AppData\LocalLow\MijuGames\Planet Crafter\Saves"),
-        new PathEntry("Steam (Proton)", @"~/.steam/steam/steamapps/compatdata/1284190/pfx/drive_c/users/steamuser/AppData/LocalLow/MijuGames/Planet Crafter/Saves"),
-        new PathEntry("macOS", @"~/Library/Application Support/MijuGames/Planet Crafter/Saves"),
+        new PathEntry("Windows", @"%USERPROFILE%\AppData\LocalLow\MijuGames\Planet Crafter"),
+        new PathEntry("Steam (Proton)", @"~/.steam/steam/steamapps/compatdata/1284190/pfx/drive_c/users/steamuser/AppData/LocalLow/MijuGames/Planet Crafter"),
+        new PathEntry("macOS", @"~/Library/Application Support/MijuGames/Planet Crafter"),
     };
 
     private string? _copiedPath;
