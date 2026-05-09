@@ -14,10 +14,15 @@ public sealed class SaveSession
 
     public int EditCounter { get; private set; }
 
+    private byte[]? _originalBytes;
+
     public bool IsDirty => Save is not null && Save.Records.Any(r => r.IsDirty);
+
+    public bool CanDiscard => _originalBytes is not null && IsDirty;
 
     public void Load(byte[] bytes, string fileName)
     {
+        _originalBytes = (byte[])bytes.Clone();
         Save = SaveFileReader.Read(bytes);
         FileName = fileName;
         Notify();
@@ -30,6 +35,16 @@ public sealed class SaveSession
             throw new InvalidOperationException("No save loaded.");
         }
         return SaveFileWriter.Write(Save);
+    }
+
+    public void DiscardAllChanges()
+    {
+        if (_originalBytes is null)
+        {
+            throw new InvalidOperationException("No save loaded.");
+        }
+        Save = SaveFileReader.Read(_originalBytes);
+        Notify();
     }
 
     public void TeleportPlayer(long playerId, Vec3 destination)
