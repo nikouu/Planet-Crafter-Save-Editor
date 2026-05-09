@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://nikouu.github.io/Planet-Crafter-Save-Editor/sitemap.xml
