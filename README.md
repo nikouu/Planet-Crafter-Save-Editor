@@ -4,6 +4,8 @@ A browser-based save editor for the game [Planet Crafter](https://store.steampow
 
 > ⚠️ **Always keep a backup of your original save file before replacing it.** This editor downloads a new file with `-edited` in the name; copying it back over your original is up to you.
 
+<img width="1170" height="1174" alt="image" src="https://github.com/user-attachments/assets/d38fefc5-f5db-4c17-b2e4-09b574520aba" />
+
 ## What it does today
 
 - Load a Planet Crafter save (drag-drop or file picker)
@@ -31,3 +33,7 @@ Tested against Planet Crafter save format `2.007`. The editor will try to load o
 ## Status
 
 Passive development. Bug reports welcome.
+
+## An experiment
+
+Read more about it here: [Vibe Coding in Mid 2026](http://www.nikouusitalo.com/blog/vibe-coding-in-mid-2026/).
