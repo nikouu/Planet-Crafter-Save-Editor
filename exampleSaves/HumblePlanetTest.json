@@ -1,0 +1,24 @@
+﻿
+{"terraTokens":0,"allTimeTerraTokens":0,"unlockedGroups":"","openedInstanceSeed":0,"openedInstanceTimeLeft":0}
+@
+{"planetId":"Humble","unitOxygenLevel":0.0,"unitHeatLevel":0.0,"unitPressureLevel":0.0,"unitPlantsLevel":0.0,"unitInsectsLevel":0.0,"unitAnimalsLevel":0.0,"unitPurificationLevel":-1.0}
+@
+{"id":44852766395711039 ,"name":"Player-1","inventoryId":3,"equipmentId":4,"playerPosition":"-141.0199,162.3033,123.528","playerRotation":"0,0.6708151,0,0.7416248","playerGaugeOxygen":98.10001373291016,"playerGaugeThirst":99.427978515625,"playerGaugeHealth":99.73597717285156,"playerGaugeToxic":0.0,"host":true,"planetId":"Humble","totalCraftedObjects":0,"totalTerraTokenEarned":0,"cameraView":0}
+@
+{"id":201960613,"gId":"EscapePodHumble","pos":"-152.0036,163.39,122.8967","rot":"0.03764734,0.7183539,0.03635561,0.6937064","planet":-486276833}
+@
+{"id":1,"woIds":"","size":12}|
+{"id":2,"woIds":"","size":4}|
+{"id":3,"woIds":"","size":12}|
+{"id":4,"woIds":"","size":4}
+@
+{"craftedObjects":0,"totalSaveFileLoad":0,"totalSaveFileTime":0}
+@
+{"stringId":"Message_YouAreAConvict","isRead":false}
+@
+
+@
+{"saveDisplayName":"HumblePlanetTest","planetId":"Humble","unlockedSpaceTrading":false,"unlockedOreExtrators":false,"unlockedTeleporters":false,"unlockedDrones":false,"unlockedAutocrafter":false,"unlockedEverything":false,"freeCraft":false,"preInterplanetarySave":false,"randomizeMineables":false,"modifierTerraformationPace":1.0,"modifierPowerConsumption":1.0,"modifierGaugeDrain":1.0,"modifierMeteoOccurence":1.0,"modifierMultiplayerTerraformationFactor":0.5,"modded":false,"version":"2.007","mode":"Standard","dyingConsequencesLabel":"DropSomeItems","startLocationLabel":"Standard","worldSeed":1553515238,"hasPlayedIntro":true,"gameStartLocation":"Standard"}
+@
+
+@
