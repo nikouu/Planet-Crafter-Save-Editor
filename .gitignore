@@ -427,3 +427,6 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+
+# Superpowers plugin scratch dir (per-session brainstorm state)
+.superpowers/
