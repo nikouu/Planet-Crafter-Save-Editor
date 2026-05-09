@@ -430,3 +430,6 @@ FodyWeavers.xsd
 
 # Superpowers plugin scratch dir (per-session brainstorm state)
 .superpowers/
+
+# Local publish output (used to test GitHub Pages deploy)
+publish/
