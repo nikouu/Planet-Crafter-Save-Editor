@@ -38,4 +38,4 @@ Passive development. Bug reports welcome.
 
 ## An experiment
 
-Read more about it here: [Vibe Coding in Mid 2026](http://www.nikouusitalo.com/blog/vibe-coding-in-mid-2026/).
+Read more about it here: [Vibe Coding in Mid 2026](http://www.nikouusitalo.com/blog/vibe-coding-in-mid-2026/) and here [Item stuck in Planet Crafter fix](https://www.nikouusitalo.com/blog/item-stuck-in-planet-crafter-fix/).
